@@ -30,9 +30,9 @@ public class ProdutosEntity {
     @Column(name = "preco")
     private BigDecimal preco;
 
-    @ManyToOne
+    @ManyToOne(cascade= {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "id_categoria", referencedColumnName = "id")
-    private CategoriaEntity categoriaEntity;
+    private CategoriaEntity categoria;
 
 
 }
