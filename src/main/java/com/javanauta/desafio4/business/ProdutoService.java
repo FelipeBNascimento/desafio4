@@ -5,7 +5,9 @@ import com.javanauta.desafio4.business.converter.MapperUpdate;
 import com.javanauta.desafio4.business.dto.request.ProdutosRequest;
 import com.javanauta.desafio4.business.dto.response.ProdutoResponse;
 import com.javanauta.desafio4.infrasctruture.IdNaoEncontrado;
+import com.javanauta.desafio4.infrasctruture.entity.CategoriaEntity;
 import com.javanauta.desafio4.infrasctruture.entity.ProdutosEntity;
+import com.javanauta.desafio4.infrasctruture.repository.CategoriaRepository;
 import com.javanauta.desafio4.infrasctruture.repository.ProdutosRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -18,10 +20,22 @@ public class ProdutoService {
     private final ProdutosRepository repository;
     private final Mapper mapper;
     private final MapperUpdate mapperUpdate;
+    private final CategoriaRepository categoriaRepository;
 
     public ProdutoResponse criarProduto(ProdutosRequest request) {
 
         ProdutosEntity produto = mapper.paraProdutoEntity(request);
+
+        if (produto.getCategoria() != null && produto.getCategoria().getNome() != null) {
+            String nome = produto.getCategoria().getNome();
+
+            CategoriaEntity categoria = categoriaRepository.findByName(nome).orElseGet(
+                    () -> produto.getCategoria()
+
+            );
+
+            produto.setCategoria(categoria);
+        }
 
         ProdutosEntity produtoSalvo = repository.save(produto);
 
